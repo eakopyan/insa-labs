@@ -24,7 +24,7 @@ echo
 echo "[1/5] Installation de Java..."
 
 apt-get update
-apt-get install -y fontconfig openjdk-17-jre
+apt-get install -y fontconfig openjdk-21-jre
 
 echo "Java installé :"
 java -version
@@ -105,12 +105,12 @@ else
     mkdir -p -m 755 /etc/apt/keyrings
 
     curl -fsSL \
-        https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key \
+        https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key \
         | gpg --dearmor \
         -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
-https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' \
+https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' \
         > /etc/apt/sources.list.d/kubernetes.list
 
     apt-get update
