@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calc-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calc-service
+  template:
+    metadata:
+      labels:
+        app: calc-service
+    spec:
+      containers:
+        - name: calc-service
+          image: calc-service:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
