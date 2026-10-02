@@ -23,6 +23,7 @@ Pour le TP DevOps, vous n'avez besoin que d'un **noeud master**. Créez une VM `
 
 ```Bash
 cd infrastructure/kubernetes
+sudo chmod +x install_k8s_master.sh
 sudo ./install_k8s_master.sh
 ``` 
 
