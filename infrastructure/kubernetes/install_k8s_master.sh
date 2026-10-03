@@ -87,6 +87,27 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/custom-resources.yaml
 
 
+# Helm
+echo " Installation de Helm..."
+
+if ! command -v helm >/dev/null 2>&1; then
+    sudo snap install helm --classic
+fi
+
+
+# Traefik
+echo " Installation du Ingress Controller Traefik..."
+
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+helm upgrade --install traefik traefik/traefik \
+    --namespace traefik \
+    --create-namespace \
+    --values "$(dirname "$0")/traefik-values.yaml" \
+    --wait
+
+
 # Configuration de kubectl
 echo "[7/8] Configuration de kubectl..."
 
