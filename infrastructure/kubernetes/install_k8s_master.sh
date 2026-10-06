@@ -76,6 +76,10 @@ sudo kubeadm init \
     --apiserver-advertise-address="${MASTER_IP}" \
     --pod-network-cidr=192.168.0.0/16
 
+# Commandes supplémentaires suite à des bugs d'installation
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Installation du réseau de Pods (Calico)
 echo "[6/8] Installation du réseau de Pods (Calico)..."
