@@ -19,7 +19,7 @@ Cette adresse sera utilisée dans la configuration de Kubernetes et Jenkins.
 
 # 2. Installer le master Kubernetes
 
-Pour le TP DevOps, vous n'avez besoin que d'un **noeud master**. Créez une VM `VM-K8s` (flavor `medium`) et clonez le dépôt Git. Puis :
+Créez une VM `VM-K8s` (flavor `medium`) et clonez le dépôt Git. Puis installez-y le Master (control plane) :
 
 ```Bash
 cd infrastructure/kubernetes
@@ -29,7 +29,7 @@ sudo ./install_k8s_master.sh
 
 Le script installe le runtime `containerd`, Kubernetes version 1.36, initialise le cluster et configure `kubectl`.
 
-Ensuite, configurez le Registry pour qu'il soit accessible par Kubernetes :
+Ensuite, configurez le Registry pour qu'il soit accessible par Kubernetes. Depuis `VM-K8s` :
 
 ```Bash
 sudo ./configure_registry.sh <IP_REGISTRY>
@@ -39,7 +39,7 @@ en utilisant l'adresse IP de `VM-Registry`.
 
 ---
 
-# 3. Créer l'accès Jenkins à Kubernetes
+# 3. Créer l'accès Jenkins à Kubernetes (TP2)
 
 Avant d'installer Jenkins, il faut lui prévoir un accès au master Kubernetes. Depuis `VM-K8s` :
 
@@ -51,7 +51,7 @@ Le script génère un fichier exécutable nommé `./jenkins-kubeconfig` qui cont
 
 ---
 
-# 4. Installer Jenkins
+# 4. Installer Jenkins (TP2)
 
 Créez une nouvelle VM `VM-Jenkins` (flavor `medium`) qui hébergera le serveur Jenkins. Clonez le dépôt, puis :
 
