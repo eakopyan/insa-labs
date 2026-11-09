@@ -7,13 +7,13 @@ echo " Kubernetes - Installation du master"
 echo "========================================="
 
 # Désactiver le swap
-echo "[1/8] Désactivation du swap..."
+echo "[1/7] Désactivation du swap..."
 sudo swapoff -a
 sudo sed -i '/ swap / s/^/#/' /etc/fstab
 
 
 # Configuration des modules réseau
-echo "[2/8] Configuration du réseau..."
+echo "[2/7] Configuration du réseau..."
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
@@ -32,7 +32,7 @@ sudo sysctl --system
 
 
 # Installation de containerd
-echo "[3/8] Installation de containerd..."
+echo "[3/7] Installation de containerd..."
 sudo apt-get update
 sudo apt-get install -y containerd
 
@@ -47,7 +47,7 @@ sudo systemctl enable containerd
 
 
 # Installation de Kubernetes
-echo "[4/8] Installation de Kubernetes..."
+echo "[4/7] Installation de Kubernetes..."
 
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
@@ -68,61 +68,25 @@ sudo systemctl enable kubelet
 
 
 # Initialisation du cluster
-echo "[5/8] Initialisation du cluster Kubernetes..."
+echo "[5/7] Initialisation du cluster Kubernetes..."
 
 MASTER_IP=$(hostname -I | awk '{print $1}')
 
 sudo kubeadm init \
     --apiserver-advertise-address="${MASTER_IP}" \
     --pod-network-cidr=192.168.0.0/16
-
-# Commandes supplémentaires suite à des bugs d'installation
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
+    
 
 # Configuration de kubectl
-echo "[6/8] Configuration de kubectl..."
+echo "[6/7] Configuration de kubectl..."
 
 mkdir -p "$HOME/.kube"
 sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 
 
-# Installation du réseau de Pods (Calico)
-echo "[7/8] Installation du réseau de Pods (Calico)..."
-
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/v3_projectcalico_org.yaml
-
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/tigera-operator.yaml
-
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/custom-resources.yaml
-
-
-# Helm
-echo " Installation de Helm..."
-
-if ! command -v helm >/dev/null 2>&1; then
-    sudo snap install helm --classic
-fi
-
-
-# Traefik
-echo " Installation du Ingress Controller Traefik..."
-
-helm repo add traefik https://traefik.github.io/charts
-helm repo update
-
-helm upgrade --install traefik traefik/traefik \
-    --namespace traefik \
-    --create-namespace \
-    --values "$(dirname "$0")/traefik-values.yaml" \
-    --wait
-
-
 # Génération de la commande join
-echo "[8/8] Génération de la commande pour les workers..."
+echo "[7/7] Génération de la commande pour les workers..."
 
 echo ""
 echo "========================================="
