@@ -81,8 +81,17 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+
+# Configuration de kubectl
+echo "[6/8] Configuration de kubectl..."
+
+mkdir -p "$HOME/.kube"
+sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
+
+
 # Installation du réseau de Pods (Calico)
-echo "[6/8] Installation du réseau de Pods (Calico)..."
+echo "[7/8] Installation du réseau de Pods (Calico)..."
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/v3_projectcalico_org.yaml
 
@@ -111,13 +120,6 @@ helm upgrade --install traefik traefik/traefik \
     --values "$(dirname "$0")/traefik-values.yaml" \
     --wait
 
-
-# Configuration de kubectl
-echo "[7/8] Configuration de kubectl..."
-
-mkdir -p "$HOME/.kube"
-sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
-sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 
 # Génération de la commande join
 echo "[8/8] Génération de la commande pour les workers..."
