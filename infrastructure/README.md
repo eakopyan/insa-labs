@@ -4,16 +4,17 @@ Créez une VM `VM-Registry` (flavor `tiny`) qui hébergera le Docker Registry. C
 
 ```Bash
 cd infrastructure/registry
+chmod +x install_registry.sh
 sudo ./install_registry.sh
 ```
 
-Ce script installe Docker et lance le Registry sur le port 5000, avec un volume persistant. Récupérez ensuite l'adresse IP de la VM :
+Ce script installe Docker et lance le Registry sur le port 5000, avec un volume persistant. L'exécution du script affiche, à la fin, l'adresse d'accès au Registry ainsi qu'un test à faire depuis une autre VM. Faites le test pour vous assurer de la connexion avec le Registry :
 
 ```Bash
-hostname -I
+curl http://<IP_REGISTRY>:<PORT>/v2/
 ```
 
-Cette adresse sera utilisée dans la configuration de Kubernetes et Jenkins.
+Notez l'adresse : elle sera utilisée dans la configuration de Kubernetes et Jenkins.
 
 ---
 
