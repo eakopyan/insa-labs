@@ -6,4 +6,6 @@ COPY . .
 
 RUN npm install sync-request
 
+EXPOSE 80
+
 CMD ["node", "CalcService.js"]
