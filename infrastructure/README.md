@@ -28,11 +28,16 @@ sudo chmod +x install_k8s_master.sh
 sudo ./install_k8s_master.sh
 ``` 
 
-Le script installe le runtime `containerd`, Kubernetes version 1.36, initialise le cluster et configure `kubectl`.
+Le script installe le runtime `containerd`, Kubernetes version 1.36, initialise le cluster et configure `kubectl`. Lu plugin réseau Calico est installé dans un script à part (`install_k8s_master_network.sh`), une fois que les workers ont rejoint le cluster.
 
-Ensuite, configurez le Registry pour qu'il soit accessible par Kubernetes. Depuis `VM-K8s` :
+---
+
+# 3. Configurer le Registry avec le Master
+
+Lancez la configuration du Registry pour qu'il soit accessible par le master Kubernetes. Depuis `VM-K8s` :
 
 ```Bash
+chmod +x configure_registry.sh
 sudo ./configure_registry.sh <IP_REGISTRY>
 ```
 
@@ -40,7 +45,7 @@ en utilisant l'adresse IP de `VM-Registry`.
 
 ---
 
-# 3. Créer l'accès Jenkins à Kubernetes (TP2)
+# 4. Créer l'accès Jenkins à Kubernetes (TP2)
 
 Avant d'installer Jenkins, il faut lui prévoir un accès au master Kubernetes. Depuis `VM-K8s` :
 
@@ -52,7 +57,7 @@ Le script génère un fichier exécutable nommé `./jenkins-kubeconfig` qui cont
 
 ---
 
-# 4. Installer Jenkins (TP2)
+# 5. Installer Jenkins (TP2)
 
 Créez une nouvelle VM `VM-Jenkins` (flavor `medium`) qui hébergera le serveur Jenkins. Clonez le dépôt, puis :
 
