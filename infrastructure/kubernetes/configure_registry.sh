@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 set -e
@@ -133,5 +132,4 @@ echo "  ${REGISTRY}"
 echo
 echo "Les images peuvent maintenant être récupérées"
 echo "depuis ce Registry par Kubernetes."
-echo
-```
+echo ""
