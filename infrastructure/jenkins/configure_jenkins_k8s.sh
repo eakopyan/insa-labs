@@ -74,7 +74,7 @@ echo "Kubeconfig installé dans :"
 echo "  $KUBE_CONFIG"
 
 # --------------------------------------------------
-# Test de connexion au cluster
+# Test de connexion au cluster Kubernetes
 # --------------------------------------------------
 
 echo
@@ -82,18 +82,19 @@ echo "[3/4] Test de connexion au cluster Kubernetes..."
 
 if sudo -u jenkins kubectl \
     --kubeconfig="$KUBE_CONFIG" \
-    cluster-info >/dev/null 2>&1; then
+    get deployments -n default >/dev/null 2>&1; then
 
     echo "Connexion au cluster Kubernetes réussie."
 
 else
 
-    echo "Erreur : Jenkins ne peut pas contacter Kubernetes."
+    echo "Erreur : Jenkins ne peut pas accéder aux Deployments."
     echo
     echo "Informations de diagnostic :"
+
     sudo -u jenkins kubectl \
         --kubeconfig="$KUBE_CONFIG" \
-        cluster-info
+        get deployments -n default
 
     exit 1
 fi
