@@ -1,4 +1,3 @@
-```bash id="q5qj5h"
 #!/bin/bash
 
 set -e
@@ -246,4 +245,3 @@ echo "et exécutez :"
 echo
 echo "  sudo ./configure_jenkins_k8s.sh ${OUTPUT_FILE}"
 echo
-```
