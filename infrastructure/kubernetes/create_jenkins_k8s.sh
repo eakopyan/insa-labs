@@ -15,6 +15,9 @@ SERVICE_ACCOUNT="jenkins-deployer"
 ROLE_NAME="jenkins-deployer"
 OUTPUT_FILE="./jenkins-kubeconfig"
 
+# Kubeconfig de l'utilisateur ubuntu
+KUBECONFIG="/home/ubuntu/.kube/config"
+
 echo
 echo "Namespace        : ${NAMESPACE}"
 echo "ServiceAccount   : ${SERVICE_ACCOUNT}"
@@ -37,7 +40,7 @@ if ! command -v kubectl >/dev/null 2>&1; then
 fi
 
 # Vérification que kubectl fonctionne
-if ! kubectl cluster-info >/dev/null 2>&1; then
+if ! kubectl --kubeconfig "$KUBECONFIG" cluster-info >/dev/null 2>&1; then
     echo
     echo "Erreur : impossible de contacter le cluster Kubernetes."
     exit 1
@@ -50,8 +53,8 @@ fi
 echo
 echo "[1/6] Création du namespace..."
 
-kubectl create namespace "${NAMESPACE}" \
-    --dry-run=client -o yaml | kubectl apply -f -
+kubectl --kubeconfig "$KUBECONFIG" create namespace "${NAMESPACE}" \
+    --dry-run=client -o yaml | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 
 echo "Namespace ${NAMESPACE} prêt."
 
@@ -62,9 +65,9 @@ echo "Namespace ${NAMESPACE} prêt."
 echo
 echo "[2/6] Création du ServiceAccount..."
 
-kubectl create serviceaccount "${SERVICE_ACCOUNT}" \
+kubectl --kubeconfig "$KUBECONFIG" create serviceaccount "${SERVICE_ACCOUNT}" \
     --namespace="${NAMESPACE}" \
-    --dry-run=client -o yaml | kubectl apply -f -
+    --dry-run=client -o yaml | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 
 echo "ServiceAccount ${SERVICE_ACCOUNT} prêt."
 
@@ -75,7 +78,7 @@ echo "ServiceAccount ${SERVICE_ACCOUNT} prêt."
 echo
 echo "[3/6] Création du Role..."
 
-cat <<EOF | kubectl apply -f -
+cat <<EOF | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -113,11 +116,11 @@ echo "Role ${ROLE_NAME} créé."
 echo
 echo "[4/6] Création du RoleBinding..."
 
-kubectl create rolebinding "${ROLE_NAME}" \
+kubectl --kubeconfig "$KUBECONFIG" create rolebinding "${ROLE_NAME}" \
     --namespace="${NAMESPACE}" \
     --role="${ROLE_NAME}" \
     --serviceaccount="${NAMESPACE}:${SERVICE_ACCOUNT}" \
-    --dry-run=client -o yaml | kubectl apply -f -
+    --dry-run=client -o yaml | kubectl --kubeconfig "$KUBECONFIG" apply -f -
 
 echo "RoleBinding créé."
 
@@ -129,7 +132,7 @@ echo
 echo "[5/6] Génération du kubeconfig Jenkins..."
 
 # Récupération du token du ServiceAccount
-TOKEN=$(kubectl create token \
+TOKEN=$(kubectl --kubeconfig "$KUBECONFIG" create token \
     "${SERVICE_ACCOUNT}" \
     --namespace="${NAMESPACE}")
 
@@ -139,12 +142,12 @@ if [ -z "${TOKEN}" ]; then
 fi
 
 # Adresse du serveur Kubernetes
-SERVER=$(kubectl config view \
+SERVER=$(kubectl --kubeconfig "$KUBECONFIG" config view \
     --minify \
     -o jsonpath='{.clusters[0].cluster.server}')
 
 # Récupération du certificat CA
-CA_DATA=$(kubectl config view \
+CA_DATA=$(kubectl --kubeconfig "$KUBECONFIG" config view \
     --raw \
     --minify \
     -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
@@ -191,12 +194,12 @@ echo "[6/6] Vérification des permissions..."
 echo
 echo "Permissions sur les Deployments :"
 
-kubectl auth can-i \
+kubectl --kubeconfig "$KUBECONFIG" auth can-i \
     --as="system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT}" \
     get deployments \
     --namespace="${NAMESPACE}"
 
-kubectl auth can-i \
+kubectl --kubeconfig "$KUBECONFIG" auth can-i \
     --as="system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT}" \
     create deployments \
     --namespace="${NAMESPACE}"
@@ -204,12 +207,12 @@ kubectl auth can-i \
 echo
 echo "Permissions sur les Services :"
 
-kubectl auth can-i \
+kubectl --kubeconfig "$KUBECONFIG" auth can-i \
     --as="system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT}" \
     get services \
     --namespace="${NAMESPACE}"
 
-kubectl auth can-i \
+kubectl --kubeconfig "$KUBECONFIG" auth can-i \
     --as="system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT}" \
     create services \
     --namespace="${NAMESPACE}"
@@ -217,7 +220,7 @@ kubectl auth can-i \
 echo
 echo "Permissions sur le cluster :"
 
-kubectl auth can-i \
+kubectl --kubeconfig "$KUBECONFIG" auth can-i \
     --as="system:serviceaccount:${NAMESPACE}:${SERVICE_ACCOUNT}" \
     get nodes \
     --all-namespaces
