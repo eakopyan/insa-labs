@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 set -e
@@ -132,4 +131,3 @@ echo "Jenkins pourra utiliser :"
 echo
 echo "    docker push ${REGISTRY}/<image>:<version>"
 echo
-```
