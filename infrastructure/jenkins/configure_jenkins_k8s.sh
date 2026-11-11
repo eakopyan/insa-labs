@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 set -e
@@ -145,4 +144,3 @@ echo "Test manuel :"
 echo
 echo "    sudo -u jenkins kubectl get pods"
 echo
-```
