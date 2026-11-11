@@ -131,13 +131,36 @@ echo "RoleBinding créé."
 echo
 echo "[5/6] Génération du kubeconfig Jenkins..."
 
-# Récupération du token du ServiceAccount
-TOKEN=$(kubectl --kubeconfig "$KUBECONFIG" create token \
-    "${SERVICE_ACCOUNT}" \
-    --namespace="${NAMESPACE}")
+# Création d'un Secret persistant associé au ServiceAccount
+SECRET_NAME="${SERVICE_ACCOUNT}-token"
+
+kubectl --kubeconfig "$KUBECONFIG" apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${SECRET_NAME}
+  namespace: ${NAMESPACE}
+  annotations:
+    kubernetes.io/service-account.name: ${SERVICE_ACCOUNT}
+type: kubernetes.io/service-account-token
+EOF
+
+# Attente de la génération du token par Kubernetes
+TOKEN=""
+for i in $(seq 1 30); do
+    TOKEN=$(kubectl --kubeconfig "$KUBECONFIG" \
+        get secret "${SECRET_NAME}" \
+        -n "${NAMESPACE}" \
+        -o jsonpath='{.data.token}' | base64 --decode)
+
+    if [ -n "${TOKEN}" ]; then
+        break
+    fi
+    sleep 1
+done
 
 if [ -z "${TOKEN}" ]; then
-    echo "Erreur : impossible de générer le token."
+    echo "Erreur : impossible de récupérer le token du Secret."
     exit 1
 fi
 
