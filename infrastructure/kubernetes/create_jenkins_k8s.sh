@@ -10,7 +10,7 @@ echo "========================================="
 # Configuration
 # --------------------------------------------------
 
-NAMESPACE="devops"
+NAMESPACE="default"
 SERVICE_ACCOUNT="jenkins-deployer"
 ROLE_NAME="jenkins-deployer"
 OUTPUT_FILE="./jenkins-kubeconfig"
