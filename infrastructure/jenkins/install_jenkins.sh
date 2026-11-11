@@ -108,9 +108,7 @@ else
         | gpg --dearmor \
         -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
-https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' \
-        > /etc/apt/sources.list.d/kubernetes.list
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' > /etc/apt/sources.list.d/kubernetes.list
 
     apt-get update
     apt-get install -y kubectl
