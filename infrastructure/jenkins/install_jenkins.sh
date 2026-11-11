@@ -1,4 +1,3 @@
-```bash
 #!/bin/bash
 
 set -e
@@ -163,4 +162,3 @@ echo "Mot de passe initial Jenkins :"
 echo
 echo "    sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
 echo
-```
